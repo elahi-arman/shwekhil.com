@@ -1,0 +1,69 @@
+<html>
+   <head>
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/reset.css">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/common.css">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/rsvp.css">
+    <!-- <link rel="stylesheet" type="text/css" href="assets/stylesheets/inputs.css"> -->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand|Oswald|Satisfy&display=swap" rel="stylesheet"> 
+   </head>
+   <body>
+    <nav>
+        <div class='nav-container'>
+            <a class='nav-link' href='./index.html'> Us </a>
+            <p class='nav-separator'> &middot </p>
+            <a class='nav-link' href='./you.html'> You </a>
+            <p class='nav-separator'> &middot </p>
+            <a class='nav-link current' href='./rsvp.html'> Rsvp </a>
+        </div>
+    </nav>
+    <!-- <div class='banner'>
+        <img src='./assets/images/fools.jpg' class='banner-image'/>
+        <div class='banner-overlay'></div>
+    </div> -->
+      <main class='landing-container'>
+        <h3 class='form-title'> Won't you be fools with us? </h1>
+        <section class='name-container'>
+            <input 
+                autofocus
+                class='name-input' 
+                placeholder='Your Name' 
+                name='name-input' 
+                id='name-input'> 
+                <button class='next-button'> Next </button>
+            </input>
+        </section>
+        <section class='rsvp-count vertical'>
+            <h6>How many people are you RSVP'ing for?</h6> 
+            <section class='radio-options-container horizontal'>
+                <input type='radio' name='rsvp-count'> Just Me </input>
+                <input type='radio' name='rsvp-count'> Everyone </input>
+            </section>
+        </section>
+
+        <section>
+            
+        </section>
+
+        <section class='ceremony vertical'>
+            <h6>Joining us for the Reception?</h6> 
+            <section class='radio-options-container horizontal'>
+                    <input type='radio' name='ceremony'> Yes </input>
+                    <input type='radio' name='ceremony'> No </input>
+            </section>
+            
+        </section>
+
+        <section class='reception vertical'>
+            <h6>How about the ceremony?</h6> 
+            <section class='radio-options-container horizontal'>
+                <input type='radio' name='reception' value='yes'> Yes </input>
+                <input type='radio' name='reception' value='no'> No </input>
+            </section>
+        </section>
+
+        <script src='./scripts/guests.js' type='text/javascript'></script>
+        <script src='./scripts/rsvp.js' type='text/javascript'></script>
+
+      </main>
+   </body>
+</html>

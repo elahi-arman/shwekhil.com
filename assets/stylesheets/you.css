@@ -1,0 +1,66 @@
+main {
+    width: 75vw;
+    margin: auto;
+}
+
+main > section {
+    display: flex;
+    justify-content: center;
+}
+
+section.vertical {
+    display: flex;
+    flex-flow: column;
+}
+
+section.horizontal {
+    display: flex;
+    flex-flow: row;
+}
+
+.section-title {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+.accomodation-preview {
+    margin-right: 3rem;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.centered {
+    align-self: center;
+}
+
+.accomodation {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    display: flex;
+}
+
+.accomodation-preview {
+    flex-basis: 60rem;
+}
+
+.accomodation-description {
+    display: flex;
+    justify-content: center;
+}
+
+.accomodation-description p {
+    line-height: 1.5rem;
+    color: rgb(55, 50, 49);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.accomodation-description h3 {
+    font-size: 1.5rem;
+}
+
+.accomodation-links a:nth-child(2) {
+    margin-left: 1rem;;
+}

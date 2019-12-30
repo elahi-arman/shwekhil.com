@@ -1,0 +1,22 @@
+<html>
+  <title> Shwekhillin It! </title>
+  <head>
+
+  </head>
+  <body>
+    <main>
+      <section id='retries-left' class='warning invisible'></section>
+      <input id='password-input' type='password'></input>
+      <button id='submit-button'>Submit</button>
+      <script type='text/javascript' src='./scripts/headers.js'></script>
+      <script type='text/javascript'>
+        const submitButton = document.getElementById('submit-button');
+        const passwordInput = document.getElementById('password-input');
+        submitButton.onclick = () => {
+          const value = passwordInput.value;
+          console.log('header', createAuthCookie(value));
+        };
+      </script>
+    </main>
+  </body>
+</html>
