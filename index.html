@@ -47,16 +47,17 @@
       const morphButton = document.querySelector('.morph-button-fixed');
       const rsvpButton = document.querySelector('.rsvp-button');
       const morphContent = document.querySelector('.morph-content');
+      const footer = document.querySelector('footer')
 
       morphButton.onclick = () => {
         morphButton.classList.toggle('active')
-        morphButton.classList.toggle('open')
+        morphButton.classList.toggle('open');
+        scrollContainer.classList.toggle('rsvp-form-open')
+        footer.classList.toggle('rsvp-form-open');
 
         if (morphButton.classList.contains('open')) {
-          morphContent.style.top = 
-            scrollContainer.querySelector('.parallax').scrollTop + 
-            document.body.clientHeight;
-        }
+          morphContent.style.top = scrollContainer.scrollTop 
+        } 
       }
     </script>
    </body>
