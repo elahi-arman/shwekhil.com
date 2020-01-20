@@ -53,6 +53,31 @@ const getNearestMatches = names => input => {
 const nameInput = document.getElementById('name-input');
 const nameSubmitButton = nameInput.nextElementSibling;
 
+const scrollContainer = document.querySelector('.parallax');
+const morphButton = document.querySelector('.morph-button-fixed');
+const rsvpButton = document.querySelector('.rsvp-button');
+const closeButton = document.querySelector('.close-button');
+const morphContent = document.querySelector('.morph-content');
+const footer = document.querySelector('footer')
+
+const morphRsvpForm = () => {
+    morphButton.classList.toggle('active')
+    morphButton.classList.toggle('open');
+    scrollContainer.classList.toggle('rsvp-form-open')
+    footer.classList.toggle('rsvp-form-open');
+
+    if (morphButton.classList.contains('open')) {
+        morphContent.style.top = scrollContainer.scrollTop 
+    } 
+
+    nameInput.value = "";
+    nameInput.classList.remove('filled')
+    nameSubmitButton.classList.remove('filled');
+    nameInput.disabled = false;
+}
+
+rsvpButton.onclick = morphRsvpForm;
+closeButton.onclick = morphRsvpForm;
 
 nameInput.onkeydown = event => {
     const value = event.target.value;
