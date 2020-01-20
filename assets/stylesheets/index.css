@@ -1,84 +1,198 @@
-
-.banner-space {
-    height: 20vh;
+.parallax {
+    height: 100vh;
+    -webkit-perspective: 1px;
+    perspective: 1px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-.banner-image {
-    position: absolute;
-    z-index: -10;
-    height: 60vh;
-    width: 100vw;
-    overflow: hidden;
-    top: -40px;
+section.one-screen {
+    height: 100vh;
 }
 
-.banner-image img {
-    object-fit: contain;
-    width: 100%;
-    filter: grayscale(.6);
-}
-
-.cutie-image-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.cutie-image {
-    width: 50vw;
-    height: auto;
-    overflow: hidden;
-    border: 20px solid #fde8e9;
-}
-
-.cutie-image img {
-    object-fit: contain;
-    width: 100%;
-}
-
-.title {
-    width: 100%;
-    text-align: center;
-    margin-top: 32px;
-    color: #332D42;
-}
-
-.countdown {
-    width: 100%;
-    height: 30vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.digit-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 20vw;
-    position: relative;
-}
-
-.digit-container-background {
-    width: 10vw;
-    height: 5vw;
-    background: rgba(255, 206, 215, 0.50);
-    position: absolute;
-    top: 25%;
-}
-
-.digit-container-inner {
+.details {
     display: flex;
     flex-flow: column;
     justify-content: center;
     align-items: center;
-    color: #332D42;
 }
 
-.digit-container-inner h2 {
-    font-size: 8rem;
-}
-
-.digit-container-inner h4 {
+.details > .details-title {
     font-size: 2rem;
+    line-height: 1.8;
+}
+
+.parallax > section {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.parallax-foreground {
+    transform: translateZ(0);
+    color: white;
+    text-shadow: 0 0 5px #332D42;
+}
+
+.parallax-background {
+    /* scale = 1 + (translateZ * -1) / perspective */
+    transform: translateZ(-1px) scale(2);
+    background: url('../images/parallax.jpg');
+    background-size: cover;
+    height: 200vh;
+}
+
+.rsvp {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2rem;
+}
+
+.rsvp-button {
+    font-size: 1.5rem;
+    background: #ffced7;
+    padding-left: 4.5rem;
+    padding-right: 4.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-family: 'Oswald';
+    /* text-shadow: 0 0 5px #B198AA; */
+    color: white ;
+    letter-spacing: 2px;
+    border: 4px solid white;
+    cursor: pointer;
+}
+
+.rsvp-button:hover {
+    color: #ffced7;
+    border-color: white;
+    background-color: white;
+}
+
+.rsvp-form-container {
+    position: absolute;
+    transform-origin: center;
+}
+
+.rsvp-form-container.active {
+    background: #ffced7;
+    width: 100%;
+    height: 100%;
+}
+
+.smooth-animation {
+    -webkit-transition: all 0.3s, color 0.3s;
+	transition: all 0.3s, color 0.3s;
+	-webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+    transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.morph-button-fixed > button {
+	z-index: 1000;
+	width: 100%;
+	height: 100%;
+	-webkit-transition: opacity 0.1s 0.5s;
+	transition: opacity 0.1s 0.5s;
+}
+
+.morph-button-fixed.open > button {
+	opacity: 0;
+	-webkit-transition: opacity 0.1s;
+	transition: opacity 0.1s;
+}
+
+.morph-button-fixed .morph-content {
+	position: fixed;
+	z-index: 900;
+	opacity: 0;
+	-webkit-transition: opacity 0.3s 0.5s, width 0.4s 0.1s, height 0.4s 0.1s, top 0.4s 0.1s, left 0.4s 0.1s, margin 0.4s 0.1s;
+	transition: opacity 0.3s 0.5s, width 0.4s 0.1s, height 0.4s 0.1s, top 0.4s 0.1s, left 0.4s 0.1s, margin 0.4s 0.1s;
+}
+
+.morph-button-fixed.open .morph-content {
+	opacity: 1;
+}
+
+.morph-button-fixed .morph-content > div {
+	visibility: hidden;
+	height: 0;
+	opacity: 0;
+	-webkit-transition: opacity 0.1s, visibility 0s 0.1s, height 0s 0.1s;
+	transition: opacity 0.1s, visibility 0s 0.1s, height 0s 0.1s;
+}
+
+.morph-button-fixed.open .morph-content > div {
+	visibility: visible;
+	height: auto;
+	opacity: 1;
+	-webkit-transition: opacity 0.3s 0.5s;
+    transition: opacity 0.3s 0.5s;
+}
+
+.morph-button-fixed.active > button {
+	z-index: 2000;
+}
+
+.morph-button-fixed.active .morph-content {
+	z-index: 1900;
+}
+
+.content-style-overlay {
+	padding: 100px 50px;
+	text-align: center;
+}
+
+.content-style-overlay h2 {
+	margin: 0 0 1em 0;
+	padding: 0;
+	font-weight: 300;
+	font-size: 3em;
+}
+
+.content-style-overlay p {
+	margin: 0 auto;
+	padding: 10px 0;
+	max-width: 700px;
+	text-align: justify;
+	font-weight: 300;
+	font-size: 1.5em;
+}
+
+.content-style-overlay .icon-close {
+	border: 2px solid #f9e1c9;
+	border-radius: 50%;
+	line-height: 2.8;
+}
+
+.content-style-overlay .icon-close:hover {
+	border-color: #ffced7;	
+}
+
+.morph-button.morph-button-overlay {
+	margin: 50px auto;
+}
+
+.morph-button-overlay .morph-content {
+	overflow: hidden;
+	background: #ffced7;
+}
+
+.morph-button-overlay.open .morph-content {
+	left: 0;
+    width: 100%;
+    height: 200vh;
+    transform: translateZ(-1px) scale(2);
+}
+
+.morph-content > div {
+    transform: scale(0.5);
 }

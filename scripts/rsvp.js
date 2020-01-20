@@ -68,4 +68,5 @@ nameSubmitButton.onclick = () => {
     nameInput.classList.add('filled')
     nameSubmitButton.classList.add('filled')
     nameInput.value = 'Thank You, '
+    nameInput.disabled = true;
 }

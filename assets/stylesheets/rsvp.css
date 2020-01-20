@@ -106,3 +106,9 @@
     padding-left: 0;
     border-left: 0;
 }
+
+.checkbox-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

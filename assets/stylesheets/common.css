@@ -4,11 +4,11 @@
 * #fde8e9 - base color - 253, 232, 233
  * #c8d3f5 - blueish
  * #332D42 - dark - 51, 45, 66
-* rgb(255, 242, 241)
+ * rgb(255, 242, 241)
  */
 
- main { 
-    padding: 16px;
+body {
+    font-size: 12px;
 }
 
 h1, h2, h4 {
@@ -20,8 +20,17 @@ p, h3 {
 }
 
 h1 {
-	font-size: 5em;
+	font-size: 5rem;
 }
+
+/** PHONE STYLES */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) { 
+    h1 {
+        font-size: 3.5rem;
+    }
+  }
 
 a, button, input {
 	font-family: 'Quicksand', cursive;

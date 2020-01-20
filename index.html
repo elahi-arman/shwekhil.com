@@ -3,55 +3,61 @@
      <link rel="stylesheet" type="text/css" href="assets/stylesheets/reset.css">
      <link rel="stylesheet" type="text/css" href="assets/stylesheets/common.css">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/index.css">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/animate.css">
     <link href="https://fonts.googleapis.com/css?family=Quicksand|Oswald|Satisfy&display=swap" rel="stylesheet"> 
    </head>
    <body>
+    <main class="parallax">
+      <section class="parallax-background"></section>
+      <section class="parallax-foreground">
+        <section class="details one-screen">
+          <h2 class='details-title'> Shwekhil: The Middle Years </h2>
+          <h1 class='details-date'> July 11, 2020 </h1>
+        </section>
+        <section class="rsvp">
+          <div class="morph-button morph-button-overlay morph-button-fixed"> 
+            <button class='rsvp-button'> RSVP </button>
+            <div class="morph-content">
+              <div>
+                <div class="content-style-overlay">
+                  <span class="icon icon-close">Close the overlay</span>
+                  <h2>About Parsley</h2>
+                  <p>Gumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.</p>
+                  <p>Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.</p>
+                  <p>Gumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.</p>
+                  <p>Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.</p>
+                  <p>Gumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.</p>
+                  <p>Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+    <footer> 
       <nav>
-        <div class='nav-container'>
-            <a class='nav-link current'> Us </a>
-            <p class='nav-separator'> &middot </p>
-            <a class='nav-link' href='./you.html'> You </a>
-            <p class='nav-separator'> &middot </p>
-            <a class='nav-link' href='./rsvp.html'> Rsvp </a>
-        </div>
-    </nav>
-      <main>
-        <section class='banner'>
-            <div class='banner-image'>
-              <img src='./assets/images/flowers-3.jpg' />
-            </div>
-            <div class='banner-space'></div>
-          </section>
-        <div class='cutie-image-container'>
-            <div class='cutie-image'> 
-              <img src='./assets/images/cuties2.jpg' />
-            </div>
-        </div>
-        <h1 class='title'> Shweta + Nikhil </h1>
-        
-        <section class='countdown '>  
-          <div class='digit-container'>
-            <div class='digit-container-background'></div>
-            <div class='digit-container-inner'>
-                <h2> 6 </h2>
-                <h4> Months </h4>
-            </div>
-          </div>
-          <div class='digit-container'>
-            <div class='digit-container-background'></div>
-            <div class='digit-container-inner'>
-                <h2> 13 </h2>
-                <h4> Days </h4>
-            </div>
-          </div>
-          <div class='digit-container'>
-            <div class='digit-container-background'></div>
-            <div class='digit-container-inner'>
-                <h2> 2 </h2>
-                <h4> Hours </h4>
-            </div>
-          </div>
-        </section> 
-      </main>
+        <div> HOME </div>
+        <div> PHOTOS </div>
+      </nav>
+    </footer>
+
+    <script type='text/javascript'>
+      const scrollContainer = document.querySelector('.parallax');
+      const morphButton = document.querySelector('.morph-button-fixed');
+      const rsvpButton = document.querySelector('.rsvp-button');
+      const morphContent = document.querySelector('.morph-content');
+
+      morphButton.onclick = () => {
+        morphButton.classList.toggle('active')
+        morphButton.classList.toggle('open')
+
+        if (morphButton.classList.contains('open')) {
+          morphContent.style.top = 
+            scrollContainer.querySelector('.parallax').scrollTop + 
+            document.body.clientHeight;
+        }
+      }
+    </script>
    </body>
 </html>
