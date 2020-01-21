@@ -183,9 +183,9 @@ const showFamilyRSVPSection = () => {
     }
 }
 
-const setSecondaryRsvpEntrant = (name) => {
-    secondaryRsvpEntrant = 
-}
+// const setSecondaryRsvpEntrant = (name) => {
+//     secondaryRsvpEntrant = 
+// }
 
 // RADIO INPUTS
 
