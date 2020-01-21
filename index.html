@@ -3,7 +3,7 @@
      <link rel="stylesheet" type="text/css" href="assets/stylesheets/reset.css">
      <link rel="stylesheet" type="text/css" href="assets/stylesheets/common.css">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/index.css">
-    <link rel="stylesheet" type="text/css" href="assets/stylesheets/animate.css">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/input.css">
     <link href="https://fonts.googleapis.com/css?family=Quicksand|Oswald|Satisfy&display=swap" rel="stylesheet"> 
    </head>
    <body>
@@ -22,17 +22,47 @@
                 <div class="content-style-overlay">
                   <div class="close-button"> X </div>
                   <section class='name-container'>
-                    <input 
+                    <div class="autocomplete">
+                      <input 
                         autofocus
                         class='name-input' 
                         placeholder='Your Name' 
                         name='name-input' 
                         id='name-input'> 
-                        <button class='next-button'> Next </button>
-                    </input>
+                        <button class='next-button'> That's Me! </button>
+                      </input>
+                      <ul id='autocomplete-list' class='hidden'>
+                        <li class='hidden autocomplete-spot'></li>
+                        <li class='hidden autocomplete-spot'></li>
+                        <li class='hidden autocomplete-spot'></li>
+                        <li class='hidden' id='autocomplete-list-no-match'> No Match Found </li>
+                      </ul>
+                    </div>
                 </section>
+                <section class="secondary-rsvp">You're RSVP'ing for {name}</section>
                 <section class="ceremony-section">
-                  <h2> So, {name} are you coming to the Ceremony? </h2>
+                  <form class="ac-custom ac-radio ac-fill" autocomplete="off">
+                    <h2><h2 class='ceremony-section-title'> Will we get to see you at the Ceremony? </h2></h2>
+                    <ul>
+                      <li><input id="ceremony-yes" value="yes" name="ceremony" type="radio"><label for="ceremony-yes">Yup!</label></li>
+                      <li><input id="ceremony-no" value="no" name="ceremony" type="radio"><label for="ceremony-no">Unfortunately not</label></li>
+                    </ul>
+                  </form>
+                </section>
+                <section class="reception-section">
+                  <form class="ac-custom ac-radio ac-fill" autocomplete="off">
+                    <h2 class='reception-section-title'> What about the reception? </h2>
+                    <ul>
+                      <li><input id="reception-yes" value="yes" name="reception" type="radio"><label for="reception-yes">Yup!</label></li>
+                      <li><input id="reception-no" value="no" name="reception" type="radio"><label for="reception-no">Unfortunately not</label></li>
+                    </ul>
+                  </form>
+                </section>
+                <section class="family-rsvp hidden">
+                  <h2 class='family-rsvp-title'> Do you want to RSVP for anyone else? </h2>
+                  <section class="family-members">
+
+                  </section>
                 </section>
                 </div>
               </div>
@@ -48,6 +78,7 @@
       </nav>
     </footer>
 
+    <script type="text/javascript" src="scripts/guests.js"></script>
     <script type="text/javascript" src="scripts/rsvp.js"></script>
    </body>
 </html>

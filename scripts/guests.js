@@ -1,10 +1,10 @@
 const GUEST_MAP = new Map(
     [
         [
-            "Anjay Patel", 
+            "Arman Elahi", 
             { 
                 "events": ["Wedding", "Reception"], 
-                "connections": ["Pranali Joshi"]
+                "connections": ["Zuhayr Elahi", "Kamal Elahi", "Sharmeen Elahi"]
             }
         ]
     ]

@@ -23,6 +23,7 @@ section.one-screen {
     flex-flow: column;
     justify-content: center;
     align-items: center;
+    text-shadow: 0 0 5px #332D42;
 }
 
 .details > .details-title {
@@ -41,7 +42,6 @@ section.one-screen {
 .parallax-foreground {
     transform: translateZ(0);
     color: white;
-    text-shadow: 0 0 5px #332D42;
 }
 
 .parallax-background {
@@ -160,22 +160,15 @@ nav {
     justify-content: center;
     align-items: center;
     padding: 3rem;
+
+    font-family: 'Quicksand', sans-serif;
 }
 
 .content-style-overlay h2 {
-	margin: 0 0 1em 0;
+	margin: 0 0 1rem 0;
 	padding: 0;
 	font-weight: 300;
-	font-size: 3em;
-}
-
-.content-style-overlay p {
-	margin: 0 auto;
-	padding: 10px 0;
-	max-width: 700px;
-	text-align: justify;
-	font-weight: 300;
-	font-size: 1.5em;
+	font-size: 3rem;
 }
 
 .content-style-overlay .close-button {
@@ -259,4 +252,85 @@ nav {
 .next-button.filled {
     padding-left: 0;
     border-left: 0;
+}
+
+.ceremony-section {
+    margin-top: 3rem;
+    visibility: hidden;
+}
+
+section.visible {
+    visibility: visible;
+}
+
+.reception-section {
+    margin-top: 3rem;
+    visibility: hidden;
+}
+
+.autocomplete {
+    /*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+#autocomplete-list {
+    border-left: 1px solid #332D42;
+    border-bottom: 1px solid #332D42;
+    border-right: 1px solid#332D42;
+    width: calc(15rem - 2px);
+    color:#332D42;
+    display: block;
+}
+
+#autocomplete-list.hidden {
+    display: none;
+}
+
+#autocomplete-list > li {
+    padding: 1rem 0.5rem;
+    font-size: 1rem;
+    background: #fde8e9;
+}
+
+#autocomplete-list > li.hidden {
+    display: none;
+}
+
+#autocomplete-list > li:hover {
+    color: #332D42;
+    background: #ffced7;
+}
+
+.secondary-rsvp {
+    display: none;
+}
+
+.family-rsvp {
+    display: none;
+    margin-top: 3rem;
+}
+
+.family-rsvp.visible {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.family-members {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.family-section-title {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.family-members > h3 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.4rem;
 }
