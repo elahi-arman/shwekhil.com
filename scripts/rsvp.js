@@ -85,6 +85,9 @@ const autocompleteNoMatch = document.querySelector('#autocomplete-list-no-match'
 const familySection = document.querySelector('.family-rsvp');
 const familyMembers = document.querySelector('.family-members');
 
+const secondaryRsvp = document.querySelector('.secondary-rsvp')
+const secondaryRsvpTitle = document.querySelector('.secondary-rsvp-title');
+
 let rsvpEntrant;
 let secondaryRsvpEntrant;
 
@@ -164,6 +167,8 @@ const resetRSVPForm = () => {
     nameInput.disabled = false;
     ceremonySection.classList.remove('visible')
     receptionSection.classList.remove('visible');
+    resetRadio("ceremony")
+    resetRadio("reception")
 }
 
 const showReceptionSection = () => {
@@ -176,16 +181,22 @@ const showFamilyRSVPSection = () => {
     if (connections.length > 0) {
         familySection.classList.add('visible')   
         connections.forEach(connection => {
-            const connectionElement = document.createElement('h3');
+            const connectionElement = document.createElement('button');
             connectionElement.textContent = connection;
+            connectionElement.onclick = () => setSecondaryRsvpEntrant(connectionElement);
             familyMembers.appendChild(connectionElement);
+            
         })
     }
 }
 
-// const setSecondaryRsvpEntrant = (name) => {
-//     secondaryRsvpEntrant = 
-// }
+const setSecondaryRsvpEntrant = (button) => {
+    const name = button.textContent;
+    button.classList.add('filled');
+    secondaryRsvpEntrant = name;
+    secondaryRsvp.classList.add('visible')
+    secondaryRsvpTitle.textContent = secondaryRsvpTitle.textContent.replace('{name}', name);
+}
 
 // RADIO INPUTS
 
@@ -246,6 +257,7 @@ function resetRadio(name) {
             var path = el.parentNode.querySelector( 'svg > path' );
             if(path) {
                 path.parentNode.removeChild(path);
+                el.checked = false;
             }
         } 
     );
