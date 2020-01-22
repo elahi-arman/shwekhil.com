@@ -24,9 +24,17 @@ const RSVPForm = {
         }
     },
     elements: {
+        outside: {
+            scrollContainer: document.querySelector('.parallax'),
+            morphButton: document.querySelector('.morph-button-fixed'),
+            rsvpButton: document.querySelector('.rsvp-button'),
+            closeButton: document.querySelector('.close-button'),
+            formContainer: document.querySelector('.morph-content'),
+            // footer: document.querySelector('footer')
+        },
         primaryGuest: {
             input: document.getElementById('name-input'),
-            submitButton: RSVPForm.elements.firstGuest.input.nextElementSibling,
+            submitButton: document.getElementById('name-input').nextElementSibling,
             autocompleteList: document.querySelector('#autocomplete-list'),
             autocompleteOpenSpots: document.querySelectorAll('.autocomplete-spot'),
             autocompleteNoMatch: document.querySelector('#autocomplete-list-no-match')
@@ -38,15 +46,20 @@ const RSVPForm = {
         ceremony: {
             section: document.querySelector('.ceremony-section'),
             title: document.querySelector('.ceremony-section-title'),
-            radioOptions: document.querySelector('form.ac-fill input[name="ceremony"')
+            radioOptions: document.querySelectorAll('form.ac-fill input[name="ceremony"]')
         },
         reception: {
             section: document.querySelector('.reception-section'),
-            radioOptions: document.querySelector('form.ac-fill input[name="reception"')
+            radioOptions: document.querySelectorAll('form.ac-fill input[name="reception"]')
         },
         family: {
             section: document.querySelector('.family-rsvp'),
             members: document.querySelector('.family-members')
+        },
+        autocomplete: {
+            list: document.querySelector('#autocomplete-list'),
+            openSpots: document.querySelectorAll('.autocomplete-spot'),
+            noMatch: document.querySelector('#autocomplete-list-no-match'),
         }
     },
     handlers: {
@@ -54,29 +67,42 @@ const RSVPForm = {
             const value = event.target.value;
 
             if (value.length > 2) {
-                const matches = getNearestMatches(ALL_GUESTS)(value);
-                requestAnimationFrame(() => showAutocompleteDropdown(matches));
+                const matches = getNearestMatches(DB.method.getGuestsByName())(value);
+                RSVPForm.helpers.autocomplete.showAutocompleteDropdown()(matches);
             } else {
-                autocompleteList.classList.add('hidden')
+                RSVPForm.elements.autocomplete.list.classList.add('hidden')
             }
 
             if(event.key === "Enter") {
-                setPrimaryGuest(nameInput.value);
+                const val = RSVPForm.elements.primaryGuest.value
+                setPrimaryGuest();
             }
         },
 
         setPrimaryGuest: (guestID) => {
-            // RSVPForm.primaryGuest
+            const guest = DB.methods.getGuestById(guestID);
+            RSVPForm.state.hasEnteredPrimaryGuest = true;
+            RSVPForm.state.primaryGuest = {
+                name: guest.name,
+                connections: guest.connections,
+                events: guest.events
+            }
         },
 
         showCeremonySection: () => {
             RSVPForm.state.isCeremonySectionShown = true;
-            RSVPForm.helpers.showElement(RSVPForm.elements.ceremony.section)
+            RSVPForm.helpers.showElement(RSVPForm.elements.ceremony.section);
+            const checkedOption = RSVPForm.elements.ceremony.radioOptions.querySelector("[checked=true]")
+
+            console.log(checkedOption.value);
         },
 
         showReceptionSection: () => {
             RSVPForm.state.isReceptionSectionShown = true;
-            RSVPForm.helpers.showElement(RSVPForm.elements.reception.section)
+            RSVPForm.helpers.showElement(RSVPForm.elements.reception.section);
+            const checkedOption = RSVPForm.elements.reception.radioOptions.querySelector("[checked=true]")
+
+            console.log(checkedOption)
         },
 
         showFamilyRSVPSection: () => {
@@ -91,21 +117,39 @@ const RSVPForm = {
                 RSVPForm.helpers.createFamilyMemberButtons()
             }
         },
+
+        toggleRsvpForm: () => {
+            const { morphButton, scrollContainer, footer, formContainer } = RSVPForm.elements.outside;
+            
+            morphButton.classList.toggle('active')
+            morphButton.classList.toggle('open')
+            scrollContainer.classList.toggle('rsvp-form-open')
+            // footer.classList.toggle('rsvp-form-open')
+
+            if (morphButton.classList.contains('open')) {
+                formContainer.style.top = scrollContainer.scrollTop
+            }
+
+            RSVPForm.helpers.resetRSVPForm();
+
+        }
     },
     helpers: {
         initializeRadioButtons: namespace => {
             RSVPForm.elements[namespace].radioOptions.forEach(element => {
-                RSVPForm.helpers.private.attachSVG(element)
+                RSVPForm.helpers.attachSVG(element)
                 element.addEventListener('change', () => {
-                    RSVPForm.helpers.private.resetRadioOptions(namespace)
-                    RSVPForm.helpers.private.fillRadioButton(element)
-                    RSVPForm.helpers.private.revealNextSection(namespace)
+                    RSVPForm.helpers.resetRadioOptions(namespace)
+                    RSVPForm.helpers.fillRadioButton(element)
+                    RSVPForm.helpers.revealNextSection(namespace)
                 })
             })
         },
+
         showElement: element => {
             element.classList.add('hidden')
         },
+
         hideElement: element => {
             element.classList.remove('hidden');
         },
@@ -119,85 +163,176 @@ const RSVPForm = {
                 RSVPForm.elements.family.members.append(familyMemberButton);
             }      
         },
-        private: {
-            attachSVG: element => {
-                const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                svg.setAttributeNS( null, 'viewBox', '0 0 100 100' );
-                svg.setAttribute( 'xmlns', 'http://www.w3.org/2000/svg' );
 
-                element.parentNode.appendChild(svg)
-            },
+        autocomplete: {
+            showAutocompleteDropdown: () => RSVPForm.helpers.debounce((matches) => {
+                const { list, openSpots, noMatch } = RSVPForm.elements.autocomplete;
 
-            resetRadioOptions: namespace => {
-                RSVPForm.elements[namespace].radioOptions.forEach(option => {
-                    const path = el.parentNode.querySelector('svg > path');
-
-                    if (path) {
-                        path.parentNode.removeChild(path);
-                        option.checked = false;
-                    }
-                })
-            },
-
-            revealNextSection: namespace => {
-                if (namespace === RSVPForm.constants.CEREMONY_RADIO_GROUP_NAME) {
-                    RSVPForm.handlers.showReceptionSection();
-                } else if (namespace === RSVPForm.constants.RECEPTION_RADIO_GROUP_NAME) {
-                    RSVPForm.handlers.showFamilyRSVPSection();
-                } else if (namespace === RSVPForm.constants.FAMILY_BUTTON_GROUP_NAME) {
-                    RSVPForm.handlers.showSecondaryRSVPSection();
+                list.classList.remove('hidden')
+            
+                for (let i = 0; i < Math.min(2, matches.length); i++) {
+                    openSpots[i].textContent = matches[i]
+                    openSpots[i].classList.remove('hidden');
                 }
+            
+                for (let i = matches.length; i < 2; i++) {
+                    openSpots[i].classList.add('hidden');
+                }
+            
+                if (matches.length === 0) {
+                    noMatch.classList.remove('hidden')
+                } else {
+                    noMatch.classList.add('hidden')
+                }
+            }, 2000),
+
+           getMatches: matchFn => names => input => (max) => {
+                const matches = [];
+            
+                for (const name of names) {
+                    const [ firstName, lastName ] = name.split(' ');
+                    if (matchFn(firstName, input) || matchFn(lastName, input)) {
+                        matches.push(name)
+                    }
+            
+                    if (max > 0 && matches.length === max) {
+                        return matches;
+                    }
+                }
+            
+                return matches;
             },
-
-            fillRadioButton: element => {
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path' );
-                const svg = element.parentNode.querySelector( 'svg' ); 
-
-                const { speed, easing } = RSVPForm.constants.RADIO_BUTTON_ANIMATION
-                const pathTransition = `stroke-dashoffset ${speed}s ${easing}`
+            
+            isTolerableEditDistance: name1 => name2 => maxDistance => {
+                let distance = 0; 
+                const maxNameLength = Math.max(name1.length, name2.length)
                 
-                svg.appendChild( path );
-                path.setAttributeNS( null, 'd', RSVPForm.constants.RADIO_BUTTON_FILL);
-
-                const length = path.getTotalLength();
-
-                // set up starting position
-                path.style.strokeDasharray = `${length} ${length}`;
-                path.style.strokeDashoffset = Math.floor(length) - 1;
-
-                // make sure browser picks up starting position before animating
-                path.getBoundingClientRect();
-                path.style.transition = pathTransition
-                path.style.WebkitTransition = pathTransition
-                path.style.MozTransition  = pathTransition
-                
-                // actually animate things
-                path.style.strokeDashoffset = '0';
-                
+                for (let i = 0; i < maxNameLength; i++) {
+                    const name1Char = name1.charAt(i)
+                    const name2Char = name2.charAt(i)
+            
+                    if (!name1Char || !name2Char || name1Char !== name2Char) {
+                        distance += 1
+                    }
+            
+                    if (distance > maxDistance) {
+                        return false
+                    }
+                }
+            
+                return true;
+            },
+            
+            isExactMatch: (str, substring) => str.includes(substring),
+            isNearMatch: (str, substring) => isTolerableEditDistance(str)(substring)(4),
+            
+            getNearestMatches: names => input => {
+                const MAX_MATCHES = 3;
+                const exactMatches = getMatches(isExactMatch)(names)(input)(-1)
+            
+                if (exactMatches.length >= MAX_MATCHES) {
+                    return exactMatches
+                } 
+            
+                const nearMatches = getMatches(isNearMatch)(names)(input)(MAX_MATCHES - exactMatches)
+                return [...exactMatches, ...nearMatches]
             }
         },
 
-        resetRSVPForm: () => {
-            this.resetNameSubmitButton();
-            this.resetNameInput();
+        debounce(func, wait, immediate = true) {
+            var timeout;
+            return function() {
+                var context = this, args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        },
 
-            this.hideElement(RSVPForm.elements.ceremony.section)
-            this.hideElement(RSVPForm.elements.reception.section)
+        attachSVG: element => {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttributeNS( null, 'viewBox', '0 0 100 100' );
+            svg.setAttribute( 'xmlns', 'http://www.w3.org/2000/svg' );
+
+            element.parentNode.appendChild(svg)
+        },
+
+        resetRadioOptions: namespace => {
+            RSVPForm.elements[namespace].radioOptions.forEach(option => {
+                const path = option.parentNode.querySelector('svg > path');
+
+                if (path) {
+                    path.parentNode.removeChild(path);
+                    option.checked = false;
+                }
+            })
+        },
+
+        revealNextSection: namespace => {
+            if (namespace === RSVPForm.constants.CEREMONY_RADIO_GROUP_NAME) {
+                RSVPForm.handlers.showReceptionSection();
+            } else if (namespace === RSVPForm.constants.RECEPTION_RADIO_GROUP_NAME) {
+                RSVPForm.handlers.showFamilyRSVPSection();
+            } else if (namespace === RSVPForm.constants.FAMILY_BUTTON_GROUP_NAME) {
+                RSVPForm.handlers.showSecondaryRSVPSection();
+            }
+        },
+
+        fillRadioButton: element => {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path' );
+            const svg = element.parentNode.querySelector( 'svg' ); 
+
+            const { speed, easing } = RSVPForm.constants.RADIO_BUTTON_ANIMATION
+            const pathTransition = `stroke-dashoffset ${speed}s ${easing}`
             
-            this.resetRadioOptions("ceremony")
-            this.resetRadioOption("reception")
+            svg.appendChild( path );
+            path.setAttributeNS( null, 'd', RSVPForm.constants.RADIO_BUTTON_FILL);
+
+            const length = path.getTotalLength();
+
+            // set up starting position
+            path.style.strokeDasharray = `${length} ${length}`;
+            path.style.strokeDashoffset = Math.floor(length) - 1;
+
+            // make sure browser picks up starting position before animating
+            path.getBoundingClientRect();
+            path.style.transition = pathTransition
+            path.style.WebkitTransition = pathTransition
+            path.style.MozTransition  = pathTransition
+            
+            // actually animate things
+            path.style.strokeDashoffset = '0';
         },
 
         resetNameSubmitButton: () => {
-            RSVPForm.elements.name.submitButton.classList.remove('filled');
-            RSVPForm.elements.name.submitButton.textContent = "That's Me!"
+            const { primaryGuest } = RSVPForm.elements;
+            primaryGuest.submitButton.classList.remove('filled');
+            primaryGuest.submitButton.textContent = "That's Me!"
         },
 
         resetNameInput: () => {
-            RSVPForm.elements.name.input.value = "";
-            RSVPForm.elements.name.input.classList.remove('filled')
-            RSVPForm.elements.name.input.disabled = false;
-        }
+            const { primaryGuest } = RSVPForm.elements;
+            primaryGuest.input.value = "";
+            primaryGuest.input.classList.remove('filled')
+            primaryGuest.input.disabled = false;
+        },
+
+        resetRSVPForm: () => {
+            const { helpers } = RSVPForm;
+            helpers.resetNameSubmitButton();
+            helpers.resetNameInput();
+
+            helpers.hideElement(RSVPForm.elements.ceremony.section)
+            helpers.hideElement(RSVPForm.elements.reception.section)
+            
+            helpers.resetRadioOptions("ceremony")
+            helpers.resetRadioOptions("reception")
+        },
     },
 
     constants: {
@@ -208,7 +343,19 @@ const RSVPForm = {
         RECEPTION_RADIO_GROUP_NAME: 'reception',
         FAMILY_BUTTON_GROUP_NAME: 'family'
     },
+
     init: () => {
+        RSVPForm.elements.outside.rsvpButton.onclick = RSVPForm.handlers.toggleRsvpForm;
+        RSVPForm.elements.outside.closeButton.onclick = RSVPForm.handlers.toggleRsvpForm;
         
+        RSVPForm.elements.autocomplete.openSpots.forEach(spot => {
+            spot.onclick = () => RSVPForm.handlers.setPrimaryGuest(spot.dataset.guest);
+        });
+
+        RSVPForm.elements.primaryGuest.input.onclick = RSVPForm.handlers.handleNameInputChange;
+        RSVPForm.elements.primaryGuest.submitButton.onclick = RSVPForm.handlers.setPrimaryGuest
+
+        RSVPForm.helpers.initializeRadioButtons(RSVPForm.constants.CEREMONY_RADIO_GROUP_NAME);
+        RSVPForm.helpers.initializeRadioButtons(RSVPForm.constants.RECEPTION_RADIO_GROUP_NAME);
     }
 }

@@ -19,6 +19,24 @@ const DB = {
         guests: new Map(),
     },
     methods: {
+        getEvents: () => DB.local.events,
+        getGuests: () => DB.local.guests,
+
+        populateGuests: () => {
+            return new Promise((resolve, reject) => {
+                DB.instance(DB.constants.tables.GUEST_LIST)
+                .select()
+                .firstPage((err, events) => {
+                    if (err) { 
+                        console.error(err); 
+                        reject(err); 
+                    }
+
+                    resolve(events)
+                })                
+            })
+        },
+
         populateEvents: () => {
             return new Promise((resolve, reject) => {
                 DB.instance(DB.constants.tables.EVENTS)
@@ -33,6 +51,8 @@ const DB = {
                 })                
             })
         },
+
+        getGuestsByName: () => DB.methods.getGuests().values().map(guest => guest.name),
 
         getGuestById: (id) => {
             return new Promise((resolve, reject) => {
@@ -116,8 +136,18 @@ const DB = {
                 for (const event of events) {
                     DB.local.events.set(event.id, event.get('Name'))
                 }
+            });
+
+        DB.methods.populateGuests()
+            .then(guests => {
+                for(const guest of guests) {
+                    DB.local.guests.set(guest.getId(), {
+                        name: guest.get("Name"),
+                        events: guest.get('Events').map(event => DB.local.events.get(event)),
+                        connections: guest.get('Connections'),
+                        
+                    })
+                }
             })
     }
 }
-
-DB.init();

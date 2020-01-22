@@ -15,6 +15,7 @@
           <h1 class='details-date'> July 11, 2020 </h1>
         </section>
         <section class="rsvp">
+          <button class='accomodations-button'> Book Hotel </button>
           <div class="morph-button morph-button-overlay morph-button-fixed"> 
             <button class='rsvp-button'> RSVP </button>
             <div class="morph-content">
@@ -72,17 +73,23 @@
           </div>
         </section>
       </section>
+      </section>
     </main>
-    <footer> 
+    <!-- <footer> 
       <nav>
         <div> HOME </div>
         <div> PHOTOS </div>
       </nav>
-    </footer>
+    </footer> -->
 
     <script type="text/javascript" src="scripts/vendor/airtable.js"></script>
     <script type="text/javascript" src="scripts/db.js"></script>
-    <script type="text/javascript" src="scripts/guests.js"></script>
-    <script type="text/javascript" src="scripts/rsvp.js"></script>
+    <script type="text/javascript" src="scripts/form.js"></script>
+    <!-- <script type="text/javascript" src="scripts/rsvp.js"></script> -->
+
+    <script type="text/javascript">
+      DB.init();
+      RSVPForm.init();
+    </script>
    </body>
 </html>
