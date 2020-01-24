@@ -56,6 +56,14 @@ section.half-screen {
     height: 200vh;
 }
 
+@media only screen 
+and (max-device-width : 812px) {
+    .parallax-background {
+        background: url('../images/parallax-copy.jpg');
+        background-size: cover;
+    }
+}
+
 .rsvp, .accomodations {
     display: flex;
     justify-content: center;
