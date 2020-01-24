@@ -39,19 +39,16 @@
                       </ul>
                     </div>
                 </section>
-                <section class="secondary-rsvp">
-                  <h2 class='secondary-rsvp-title'> You're RSPV'ing for {name} </h2>
-                </section>
-                <section class="ceremony-section">
+                <section class="ceremony-section hidden">
                   <form class="ac-custom ac-radio ac-fill" autocomplete="off">
-                    <h2><h2 class='ceremony-section-title'> Will we get to see you at the Ceremony? </h2></h2>
+                    <h2 class='ceremony-section-title'> Will we get to see you at the Ceremony? </h2>
                     <ul>
                       <li><input id="ceremony-yes" value="yes" name="ceremony" type="radio"><label for="ceremony-yes">Yup!</label></li>
                       <li><input id="ceremony-no" value="no" name="ceremony" type="radio"><label for="ceremony-no">Unfortunately not</label></li>
                     </ul>
                   </form>
                 </section>
-                <section class="reception-section">
+                <section class="reception-section hidden">
                   <form class="ac-custom ac-radio ac-fill" autocomplete="off">
                     <h2 class='reception-section-title'> What about the reception? </h2>
                     <ul>
@@ -59,6 +56,13 @@
                       <li><input id="reception-no" value="no" name="reception" type="radio"><label for="reception-no">Unfortunately not</label></li>
                     </ul>
                   </form>
+                </section>
+                <section class="confirm-section hidden">
+                  <button class="confirm-rsvp-button">
+                    <span class="content"> Submit </span>
+                    <span class="progress"></span>
+                  </button>
+                  <span class="confirmation"></span>
                 </section>
                 <section class="family-rsvp hidden">
                   <h2 class='family-rsvp-title'> Do you want to RSVP for anyone else? </h2>

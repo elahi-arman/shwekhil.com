@@ -16,11 +16,14 @@ const DB = {
     },
     local: {
         events: new Map(),
-        guests: new Map(),
+        guestsByName: new Map(),
+        guestsById: new Map(),
     },
+
     methods: {
         getEvents: () => DB.local.events,
-        getGuests: () => DB.local.guests,
+        getGuestsByName: () => DB.local.guestsByName,
+        getGuestsById: () => DB.local.guestsBydId,
 
         populateGuests: () => {
             return new Promise((resolve, reject) => {
@@ -52,75 +55,37 @@ const DB = {
             })
         },
 
-        getGuestsByName: () => DB.methods.getGuests().values().map(guest => guest.name),
-
-        getGuestById: (id) => {
-            return new Promise((resolve, reject) => {
-                DB.instance(DB.constants.tables.GUEST_LIST)
-                .select({
-                    maxRecords: DB.constants.MAX_GUESTS_PER_SEARCH_BY_ID,
-                    filterByFormula: `FIND("${id}", RECORD_ID())`
-                })
-                .firstPage((err, guests) => {
-                    if (err) { 
-                        reject(err)
-                    }
-
-                    const guest = guests[0];
-
-                    // locally caching guests
-                    DB.local.guests.set(guest.getId(), {
-                        name: guest.get("Name"),
-                        events: guest.get('Events').map(event => DB.local.events.get(event)),
-                        connections: guest.get('Connections'),
-                        
-                    })
-                    
-                    resolve(guest)
-                })
-            })   
+        searchGuestByName: (name) => DB.local.guestsByName.get(name.toLowerCase()),
+        getConnectionsForGuest: (name) => {
+            const connections = DB.methods.searchGuestByName(name).connections;
+            return connections.map(connectionID => DB.local.guestsById.get(connectionID))
         },
 
-        searchGuestByName: (guest) => {
-            return new Promise((resolve, reject) => {
-                DB.instance(DB.constants.tables.GUEST_LIST)
-                .select({
-                    maxRecords: DB.constants.MAX_GUESTS_PER_SEARCH_BY_NAME,
-                    filterByFormula: `FIND("${guest}", {Name})`,
-                    fields: [DB.constants.GUEST_LIST_TABLE_NAME_FIELD]
-                })
-                .firstPage((err, guests) => {
-                    if (err) { 
-                        reject(err)
-                    }
-
-                    resolve(guests)
-                })
-            })   
-        },
-
-        submitRSVP: (rsvps) => {
+        submitRSVP: (guest, reception = true, wedding = false) => {
             return new Promise((resolve, reject) => {
                 DB.instance(DB.constants.tables.RSVP) 
-                    .create(rsvps, { typecast: true }, (err, records) => {
+                    .create(
+                        [DB.helpers.createRSVPResponse(guest, reception, wedding)], 
+                        { typecast: true }, 
+                        (err, records) => {
                         if (err) {
                           reject(err);
                         }
+
+                        resolve();
                     });
             })
         }
     },
 
     helpers: {
-        createRSVPResponse: (guestID, reception = true, wedding = false) => {
-            const { name } = DB.local.guests.get(guestID);
-
+        createRSVPResponse: (guest, reception, wedding) => {
             return {
                 fields: {
-                    Name: name,
+                    Name: guest.name,
                     Wedding: wedding,
                     Reception: reception,
-                    GuestID: guestID
+                    GuestID: guest.id
                 }
             }
         }
@@ -141,12 +106,15 @@ const DB = {
         DB.methods.populateGuests()
             .then(guests => {
                 for(const guest of guests) {
-                    DB.local.guests.set(guest.getId(), {
+                    const g = {
+                        id: guest.getId(),
                         name: guest.get("Name"),
                         events: guest.get('Events').map(event => DB.local.events.get(event)),
-                        connections: guest.get('Connections'),
-                        
-                    })
+                        connections: guest.get('Connections'), 
+                    }
+
+                    DB.local.guestsByName.set(g.name.toLowerCase(), g)
+                    DB.local.guestsById.set(g.id, g)
                 }
             })
     }

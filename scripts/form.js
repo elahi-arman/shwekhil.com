@@ -5,23 +5,15 @@ const RSVPForm = {
         isReceptionSectionShown: false,
         isFamilySectionShown: false,
         primaryGuest: {
+            id: '',
             name: '',
             connections: [],
             events: [],
-            state: {
-                isAttendingReception: false,
-                isAttendingCeremony: false
-            }
+            isAttendingReception: false,
+            isAttendingCeremony: false
         },
-        secondaryGuest: {
-            name: '',
-            connections: [],
-            events: [],
-            state: {
-                isAttendingReception: false,
-                isAttendingCeremony: false
-            }
-        }
+        family: new Map(),
+        activeFamilyMember: '',
     },
     elements: {
         outside: {
@@ -38,10 +30,6 @@ const RSVPForm = {
             autocompleteList: document.querySelector('#autocomplete-list'),
             autocompleteOpenSpots: document.querySelectorAll('.autocomplete-spot'),
             autocompleteNoMatch: document.querySelector('#autocomplete-list-no-match')
-        },
-        secondaryGuest: {
-            section: document.querySelector('.secondary-rsvp'),
-            title: document.querySelector('.secondary-rsvp-title')
         },
         ceremony: {
             section: document.querySelector('.ceremony-section'),
@@ -60,61 +48,129 @@ const RSVPForm = {
             list: document.querySelector('#autocomplete-list'),
             openSpots: document.querySelectorAll('.autocomplete-spot'),
             noMatch: document.querySelector('#autocomplete-list-no-match'),
+        },
+        submit: {
+            section: document.querySelector('.confirm-section'),
+            button: document.querySelector('.confirm-rsvp-button'),
+            confirmation: document.querySelector('.confirm-section .confirmation'),
+            progress: document.querySelector('.confirm-section .progress')
         }
     },
     handlers: {
+        showSubmitSection: () => {
+            RSVPForm.helpers.showElement(RSVPForm.elements.submit.section)
+        },
+
+        confirmPrimaryGuest: event => {
+            const elements = RSVPForm.elements.primaryGuest
+
+            const name = elements.input.value;
+            const guest = DB.methods.searchGuestByName(name)
+            RSVPForm.handlers.setPrimaryGuest(guest);
+            RSVPForm.handlers.showCeremonySection()
+            
+            elements.input.disabled = true;
+            elements.input.classList.add('filled');
+            elements.input.value = 'Thanks'
+
+            elements.submitButton.classList.add('filled');
+            elements.submitButton.textContent = `${name}! `
+        },
+
+        submitRSVP: () => {
+            const elements = RSVPForm.elements.submit;
+            elements.button.classList.add('state-loading');
+            elements.progress.style.width = '40%'
+
+            const guest = RSVPForm.state.activeFamilyMember 
+                ? RSVPForm.state.family.get(RSVPForm.state.activeFamilyMember)
+                : RSVPForm.state.primaryGuest
+
+            console.log(DB.helpers.createRSVPResponse(guest, guest.isAttendingReception, guest.isAttendingCeremony))
+
+            DB.methods.submitRSVP(guest, guest.isAttendingReception, guest.isAttendingCeremony)
+                .then(() => {
+                    elements.button.classList.add('state-success')
+                    elements.progress.style.width = '100%'
+                    elements.confirmation.textContent = "✔ Submitted"
+                    elements.confirmation.classList.add('success');
+
+                    RSVPForm.handlers.showFamilyRSVPSection();
+                }).catch(() => {
+                    elements.button.classList.add('state-error')
+                    elements.confirmation.textContent = "✖ Error"
+                    elements.confirmation.classList.add('error');
+                }).finally(() => {
+                    setTimeout(RSVPForm.handlers.resetSubmitRSVPButton, 3000)
+                })
+        },
+
+        resetSubmitRSVPButton: () => {
+            const elements = RSVPForm.elements.submit;
+            elements.button.classList.remove('state-loading', 'state-error', 'state-success')
+            elements.confirmation.classList.remove('success', 'error');
+            elements.confirmation.textContent = '';
+            elements.progress.style.width = '0%'
+        },
+
         handleNameInputChange: event => {
             const value = event.target.value;
 
-            if (value.length > 2) {
-                const matches = getNearestMatches(DB.method.getGuestsByName())(value);
-                RSVPForm.helpers.autocomplete.showAutocompleteDropdown()(matches);
-            } else {
-                RSVPForm.elements.autocomplete.list.classList.add('hidden')
-            }
+            // if (value.length > 2) {
+            //     const matches = getNearestMatches(DB.method.getGuestsByName())(value);
+            //     RSVPForm.helpers.autocomplete.showAutocompleteDropdown()(matches);
+            // } else {
+            //     RSVPForm.elements.autocomplete.list.classList.add('hidden')
+            // }
 
             if(event.key === "Enter") {
-                const val = RSVPForm.elements.primaryGuest.value
-                setPrimaryGuest();
+                RSVPForm.handlers.confirmPrimaryGuest()
             }
         },
 
-        setPrimaryGuest: (guestID) => {
-            const guest = DB.methods.getGuestById(guestID);
+        setPrimaryGuest: (guest) => {
             RSVPForm.state.hasEnteredPrimaryGuest = true;
             RSVPForm.state.primaryGuest = {
+                id: guest.id,
                 name: guest.name,
                 connections: guest.connections,
                 events: guest.events
             }
         },
 
+        setActiveFamilyMember: (guest) => {
+            const { name } = guest;
+            const elements = RSVPForm.elements.primaryGuest
+
+            RSVPForm.state.activeFamilyMember = name;
+            RSVPForm.state.family.set(name, RSVPForm.helpers.createFamilyEntry(guest));
+
+            elements.submitButton.textContent += `You're now RSVPing for ${name}`
+            RSVPForm.helpers.resetRadioOptions(RSVPForm.constants.CEREMONY_RADIO_GROUP_NAME)
+            RSVPForm.helpers.resetRadioOptions(RSVPForm.constants.RECEPTION_RADIO_GROUP_NAME)
+        },
+
         showCeremonySection: () => {
             RSVPForm.state.isCeremonySectionShown = true;
             RSVPForm.helpers.showElement(RSVPForm.elements.ceremony.section);
-            const checkedOption = RSVPForm.elements.ceremony.radioOptions.querySelector("[checked=true]")
-
-            console.log(checkedOption.value);
         },
 
         showReceptionSection: () => {
             RSVPForm.state.isReceptionSectionShown = true;
             RSVPForm.helpers.showElement(RSVPForm.elements.reception.section);
-            const checkedOption = RSVPForm.elements.reception.radioOptions.querySelector("[checked=true]")
-
-            console.log(checkedOption)
         },
 
         showFamilyRSVPSection: () => {
-            if(RSVPForm.controller === null || RSVPForm.state.isFamilySectionShown) {
+            if(RSVPForm.state.isFamilySectionShown) {
                 return;
             }
 
+            const guest = RSVPForm.state.primaryGuest;
             RSVPForm.state.isFamilySectionShown = true;
-            const connections = RSVPForm.controller.getConnections(guest);
-            if (connections.length > 0) {
+            if (guest.connections.length > 0) {
+                const connections = DB.methods.getConnectionsForGuest(guest.name);
                 RSVPForm.helpers.showElement(RSVPForm.elements.family.section)
-                RSVPForm.helpers.createFamilyMemberButtons()
+                RSVPForm.helpers.createFamilyMemberButtons(connections)
             }
         },
 
@@ -140,18 +196,28 @@ const RSVPForm = {
                 RSVPForm.helpers.attachSVG(element)
                 element.addEventListener('change', () => {
                     RSVPForm.helpers.resetRadioOptions(namespace)
-                    RSVPForm.helpers.fillRadioButton(element)
+                    RSVPForm.helpers.fillRadioButton(element);
                     RSVPForm.helpers.revealNextSection(namespace)
+
+                    const guest = RSVPForm.state.currentFamilyMember
+                        ? RSVPForm.state.family.get(currentFamilyMember) 
+                        : RSVPForm.state.primaryGuest
+
+                    if (namespace === RSVPForm.constants.RECEPTION_RADIO_GROUP_NAME) {
+                        guest.isAttendingReception = element.value === "yes"
+                    } else if (namespace === RSVPForm.constants.CEREMONY_RADIO_GROUP_NAME) {
+                        guest.isAttendingCeremony = element.value === "yes"
+                    }
                 })
             })
         },
 
         showElement: element => {
-            element.classList.add('hidden')
+            element.classList.remove('hidden')
         },
 
         hideElement: element => {
-            element.classList.remove('hidden');
+            element.classList.add('hidden');
         },
 
         createFamilyMemberButtons: connections => {
@@ -159,9 +225,22 @@ const RSVPForm = {
                 const familyMember = connections[i]
                 const familyMemberButton = document.createElement('button');
                 familyMemberButton.textContent = familyMember.name;
-                familyMemberButton.onclick = () => setSecondaryRsvpEntrant(familyMember);
+                familyMemberButton.onclick = () => {
+                    familyMemberButton.classList.add('filled')
+                    RSVPForm.handlers.setActiveFamilyMember(familyMember);
+                }
                 RSVPForm.elements.family.members.append(familyMemberButton);
             }      
+        },
+
+        createFamilyEntry: (guest) => {
+            return {
+                id: guest.id,
+                name: guest.name,
+                events: guest.events,
+                isAttendingReception: false,
+                isAttendingCeremony: false
+            }
         },
 
         autocomplete: {
@@ -277,7 +356,7 @@ const RSVPForm = {
             if (namespace === RSVPForm.constants.CEREMONY_RADIO_GROUP_NAME) {
                 RSVPForm.handlers.showReceptionSection();
             } else if (namespace === RSVPForm.constants.RECEPTION_RADIO_GROUP_NAME) {
-                RSVPForm.handlers.showFamilyRSVPSection();
+                RSVPForm.handlers.showSubmitSection();
             } else if (namespace === RSVPForm.constants.FAMILY_BUTTON_GROUP_NAME) {
                 RSVPForm.handlers.showSecondaryRSVPSection();
             }
@@ -352,10 +431,12 @@ const RSVPForm = {
             spot.onclick = () => RSVPForm.handlers.setPrimaryGuest(spot.dataset.guest);
         });
 
-        RSVPForm.elements.primaryGuest.input.onclick = RSVPForm.handlers.handleNameInputChange;
-        RSVPForm.elements.primaryGuest.submitButton.onclick = RSVPForm.handlers.setPrimaryGuest
+        RSVPForm.elements.primaryGuest.input.onkeydown = RSVPForm.handlers.handleNameInputChange;
+        RSVPForm.elements.primaryGuest.submitButton.onclick = RSVPForm.handlers.confirmPrimaryGuest;
 
         RSVPForm.helpers.initializeRadioButtons(RSVPForm.constants.CEREMONY_RADIO_GROUP_NAME);
         RSVPForm.helpers.initializeRadioButtons(RSVPForm.constants.RECEPTION_RADIO_GROUP_NAME);
+
+        RSVPForm.elements.submit.button.onclick = RSVPForm.handlers.submitRSVP
     }
 }

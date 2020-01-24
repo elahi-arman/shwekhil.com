@@ -124,7 +124,7 @@ nameInput.onkeydown = event => {
 
     if (value.length > 2) {
         const matches = getNearestMatches(ALL_GUESTS)(value);
-        requestAnimationFrame(() => showAutocompleteDropdown(matches));
+        showAutocompleteDropdown(matches);
     } else {
         autocompleteList.classList.add('hidden')
     }

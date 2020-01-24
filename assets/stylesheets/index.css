@@ -189,6 +189,10 @@ nav {
 	font-size: 3rem;
 }
 
+.content-style-overlay > section {
+    margin-top: 2rem;
+}
+
 .content-style-overlay .close-button {
     cursor: pointer;
 	border: 2px solid #f9e1c9;
@@ -220,9 +224,14 @@ nav {
     text-shadow: 0px 0px 5px#ffced7;
 }
 
-.morph-button-overlay .morph-content {
+.morph-button-overlay{
 	overflow: hidden;
 	background: #ffced7;
+}
+
+.morph-content {
+    overflow-y: scroll;
+    background: #ffced7;
 }
 
 .morph-button-overlay.open .morph-content {
@@ -240,6 +249,7 @@ nav {
 }
 
 .next-button {
+    cursor: pointer;
     border: 3px solid #ffced7;
     opacity: .75;
     background:black;
@@ -250,9 +260,15 @@ nav {
     height: 3rem;
 }
 
-.next-button.filled, .name-input.filled {
+.next-button:hover {
+    border-color: black;
+}
+
+.next-button.filled, .name-input.filled, .next-button:active {
+    border-color: #ffced7;
     background: #ffced7;
     color: black;
+    font-size: 2em;
 }
 
 .name-input.filled {
@@ -268,18 +284,9 @@ nav {
     border-left: 0;
 }
 
-.ceremony-section {
+section.hidden {
+    display: none;
     margin-top: 3rem;
-    visibility: hidden;
-}
-
-section.visible {
-    visibility: visible;
-}
-
-.reception-section {
-    margin-top: 3rem;
-    visibility: hidden;
 }
 
 .autocomplete {
@@ -319,7 +326,6 @@ section.visible {
 
 .secondary-rsvp {
     margin-top: 3rem;
-    display: none;
 }
 
 .secondary-rsvp > .secondary-rsvp-title {
@@ -333,11 +339,6 @@ section.visible {
     align-items: center;
 }
 
-.family-rsvp {
-    display: none;
-    margin-top: 3rem;
-}
-
 .family-rsvp.visible {
     display: flex;
     flex-flow: column;
@@ -347,7 +348,7 @@ section.visible {
 
 .family-members {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 100%;
 }
@@ -367,6 +368,8 @@ section.visible {
     color: white ;
     border: 4px solid white;
     cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .family-members > button:hover,
@@ -374,4 +377,91 @@ section.visible {
     color: #ffced7;
     border-color: white;
     background-color: white;
+}
+
+.confirm-section {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+.confirm-rsvp-button:hover:not(.state-loading) {
+    color: #ffced7;
+    border-color: white;
+    background-color: white;
+}
+
+.confirm-rsvp-button { 
+	overflow: hidden;
+	-webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
+    
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.2rem;
+    background: #ffced7;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    color: white ;
+    border: 4px solid white;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+    position: 0;
+}
+
+.confirm-rsvp-button .content {
+	-webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
+	transition: opacity 0.3s, transform 0.3s;
+}
+
+.confirm-rsvp-button .content::before,
+.confirm-rsvp-button .content::after {
+	top: 100%;
+	right: auto;
+	left: 50%;
+	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.3s;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+
+.confirm-rsvp-button.state-loading {
+	-webkit-transform: scaleY(0.3);
+    transform: scaleY(0.3);
+    border-top-width: 12px;
+    border-bottom-width: 12px;
+}
+
+.confirm-rsvp-button.state-loading .content {
+	opacity: 0;
+}
+
+.confirm-rsvp-button.state-success .content,
+.confirm-rsvp-button.state-error .content {
+	-webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+}
+
+.confirm-rsvp-button .progress {
+    width: 0%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: white;
+    transition: width 0.3s;
+}
+
+.confirm-section .confirmation {
+    font-size: 2rem;
+}
+
+.confirm-section .confirmation.success {
+    color: #332D42;
+}
+
+.confirm-section .confirmation.error {
+    color: #C62B11;
 }
